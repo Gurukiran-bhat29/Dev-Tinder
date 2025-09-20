@@ -31,7 +31,15 @@ app.use("/test", (req, res) => {
 })
 
 // This will match only GET requests to /user
+// This will allow the api to pass query
 app.get("/user", (req, res) => {
+    console.log('query: /user?userId=value', req.query)
+    res.send({firstName: 'Gurukiran', lastName: 'Bhat'});
+})
+
+// For dynamic route
+app.get("/user/:userId/:name", (req, res) => {
+    console.log('params', req.params)
     res.send({firstName: 'Gurukiran', lastName: 'Bhat'});
 })
 

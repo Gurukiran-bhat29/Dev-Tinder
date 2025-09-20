@@ -9,3 +9,7 @@
 - What are dependencies
 - What is the use of "-g" while npm install
 - Difference between caret and tilde ( ^ vs ~ )
+- Explore routing and use of ?, +, (), * in the routes
+- Use of regex in the routes /a/ and /.*fly$/
+- Reading the query params in the routes 
+- Reading the dynamic routes
