@@ -89,10 +89,14 @@ app.get("/admin/deleteUser", (req, res) => {
     res.send("Deleted a user");
 });
 
-app.listen(7777, () => {
-    console.log("Server is successfully listening on port 7777...");
-});
+  /* < -------------------------------------------------- > */
 
+  // Error handling
+  app.use('/', (err, req, res, next) => {
+    if (err) {
+      res.status(500).send("something went wrong");
+    }
+  })
 
 app.listen('7070', () => {
   console.log('Server is running on port 7070')
