@@ -2,55 +2,98 @@ const express = require('express');
 
 const app = express();
 
-// This will respond to all incoming requests
-// app.use((req, res) => {
-//     res.send("Hello from the server!");
-// })
+/* 
+  Whenever the api call is made, it goes through a middleware
+  GET /user => Middleware chain => request handler
+  Whichever request handler has next() are considered 'Middleware'
+*/
 
-// app.use("/hello/2", (req, res) => {
-//     res.send("Hello from the /hello/2 endpoint!");
-// })
+// Multiple route handlers
+app.use(
+  '/user',
+  (req, res, next) => {
 
-// app.use("/hello", (req, res) => {
-//     res.send("Hello from the /hello endpoint!");
-// })
+    // 1st scenario
+    /* 
+      res.send('1st response')
+      next(); 
+    */
 
-// app.use("/test", (req, res) => {
-//     res.send("Hello from the /test endpoint!");
-// })
+    // 2nd scenario
+    next();
+    res.send('1st response')
+  },
+  (req, res) => {
+    next();
+    res.send('2nd response')
+  },
+  (req, res) => {
+    // next();
+    res.send('3rd response')
+  })
 
-// app.use("/", (req, res) => {
-//     res.send("Hello from the / endpoint!");
-// })
+// route handlers can be wrapped inside the array
+app.use(
+  '/user',
+  [(req, res, next) => {
+    res.send('1st response')
+  },
+  (req, res) => {
+    next();
+    res.send('2nd response')
+  },
+  (req, res) => {
+    // next();
+    res.send('3rd response')
+  }]
+)
 
-/* <--------------------------------------------------------> */
+// Even below kind of route handlers is possible
+// app.use('/user', rh1, [rh2, rh3], rh4, rh5)
 
-// This will match all the HTTP methods (GET, POST, PUT, DELETE, etc.) to /test
-app.use("/test", (req, res) => {
-    res.send("Hello from the /test endpoint!");
-})
+/* < -------------------------------------------------- > */
 
-// This will match only GET requests to /user
-// This will allow the api to pass query
-app.get("/user", (req, res) => {
-    console.log('query: /user?userId=value', req.query)
-    res.send({firstName: 'Gurukiran', lastName: 'Bhat'});
-})
+// '/test' use different route handling technique
+app.get(
+  '/test',
+  (req, res, next) => {
+    next();
+    res.send('1st response')
+  })
 
-// For dynamic route
-app.get("/user/:userId/:name", (req, res) => {
-    console.log('params', req.params)
-    res.send({firstName: 'Gurukiran', lastName: 'Bhat'});
-})
+  app.get(
+  '/test',
+  (req, res) => {
+    res.send('2nd response')
+  })
 
-app.post("/user", (req, res) => {
-    res.send('Data has been saved successfully!');
-})
+  /* < -------------------------------------------------- > */
 
-app.delete("/user", (req, res) => {
-    res.send('Data has been deleted successfully!');
-})
-
-app.listen(6969, () => {
-    console.log('Server is running on port 6969');
+// Handle Auth Middleware for all GET POST,... requests
+app.use("/admin", (req, res, next) => {
+    console.log("Admin auth is getting checked!!");
+    const token = "xyz";
+    const isAdminAuthorized = token === "xyz";
+    if (!isAdminAuthorized) {
+        res.status(401).send("Unauthorized request");
+    } else {
+        next();
+    }
 });
+
+app.get("/admin/getAllData", (req, res) => {
+    res.send("All Data Sent");
+});
+
+app.get("/admin/deleteUser", (req, res) => {
+    res.send("Deleted a user");
+});
+
+app.listen(7777, () => {
+    console.log("Server is successfully listening on port 7777...");
+});
+
+
+app.listen('7070', () => {
+  console.log('Server is running on port 7070')
+})

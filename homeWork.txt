@@ -13,3 +13,7 @@
 - Use of regex in the routes /a/ and /.*fly$/
 - Reading the query params in the routes 
 - Reading the dynamic routes
+- What is middleware and why do we need it?
+- How express JS basically handles request behind the scenes
+- Http status code
+- Difference between app.use() VS app.all() -> Both used for get, post and etc
