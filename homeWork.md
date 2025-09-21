@@ -1,0 +1,31 @@
+- Create a repository
+- Initialize the repository
+- node_modules, package.json, package-lock.json
+- Install express
+- Create a server
+- Listen to port 7777
+- Write request handlers for /test , /hello
+- Install nodemon and update scripts inside package.json
+- What are dependencies
+- What is the use of "-g" while npm install
+- Difference between caret and tilde ( ^ vs ~ )
+- Explore routing and use of ?, +, (), * in the routes
+- Use of regex in the routes /a/ and /.*fly$/
+- Reading the query params in the routes 
+- Reading the dynamic routes
+- What is middleware and why do we need it?
+- How express JS basically handles request behind the scenes
+- Http status code
+- Write a dummy auth middleware for admin
+- Write a dummy auth middleware for all user routes, except /user/login
+- Difference between app.use() VS app.all() -> Both used for get, post and etc
+- Error Handling using app.use("/", (err, req, res, next) = {});
+
+- Create a free cluster on MongoDB official website (Mongo Atlas)
+- Install mongoose library
+- Connect your application to the Database "Connection url"/devTinder
+- Call the connectDB function and connect to database before starting application on 7777
+- Create a userSchema & user Model
+- Create POST /signup API to add data to database
+- Push some documents using API calls from postman
+- Error handling using try and catch method
