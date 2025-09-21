@@ -31,3 +31,4 @@
 - Error handling using try and catch method
 
 - difference between Javascript vs Json object
+- difference between Patch and Put

@@ -36,7 +36,7 @@ app.post('/signUp', async (req, res) => {
     await user.save();
     res.send('User added successfully')
   } catch (err) {
-    res.status(400).send('Error saving the user '+ err.message)
+    res.status(400).send('Error saving the user ' + err.message)
   }
 })
 
@@ -67,6 +67,43 @@ app.get('/feed', async (req, res) => {
     }
   } catch (err) {
     console.error('Something went wrong', err)
+  }
+})
+
+
+// Delete a user from Database
+app.delete('/user', async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    // const user = await User.findByIdAndDelete({ _id: userId })
+    const user = await User.findByIdAndDelete(userId)
+    res.send('User deleted successfully');
+  } catch (err) {
+    console.error('Something went wrong', err);
+  }
+})
+
+// Update a user to Database
+app.patch('/user', async (req, res) => {
+  const data = req.body;
+  const userId = req.body.userId;
+  try {
+    const user = await User.findByIdAndUpdate({ _id: userId }, data);
+    console.log('user', user);
+
+    const userBefore = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: 'before'
+    });
+    console.log('Before document', userBefore);
+
+    const userAfter = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: 'after'
+    });
+    console.log('Before document', userAfter);
+
+    res.send('User update successfully');
+  } catch (err) {
+    console.error('Something went wrong', err);
   }
 })
 
