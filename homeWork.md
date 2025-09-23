@@ -32,3 +32,5 @@
 
 - difference between Javascript vs Json object
 - difference between Patch and Put
+
+- Add the validation to 'skills'
