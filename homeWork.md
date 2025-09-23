@@ -34,3 +34,4 @@
 - difference between Patch and Put
 
 - Add the validation to 'skills'
+- NEVER TRUST 'req.body'
