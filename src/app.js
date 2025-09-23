@@ -92,18 +92,21 @@ app.patch('/user', async (req, res) => {
     console.log('user', user);
 
     const userBefore = await User.findByIdAndUpdate({ _id: userId }, data, {
-      returnDocument: 'before'
+      returnDocument: 'before',
+      runValidators: true
     });
     console.log('Before document', userBefore);
 
     const userAfter = await User.findByIdAndUpdate({ _id: userId }, data, {
-      returnDocument: 'after'
+      returnDocument: 'after',
+      runValidators: true
     });
     console.log('Before document', userAfter);
 
     res.send('User update successfully');
   } catch (err) {
     console.error('Something went wrong', err);
+    res.status(400).send('Update failed' + err.message)
   }
 })
 
