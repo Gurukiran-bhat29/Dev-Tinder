@@ -1,6 +1,9 @@
 const express = require('express');
 const connectDb = require('./config/database');
+const validator = require('validator');
 const User = require('./models/user');
+const { validateSignUpData } = require('./utils/validation');
+const bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -29,14 +32,57 @@ const app = express();
 app.use(express.json());
 
 app.post('/signUp', async (req, res) => {
-  console.log('Body', req.body)
-  const user = new User(req.body);
+  // console.log('Body', req.body)
 
+  // NOTE: Never pass the req.body directly to the database instance
+  // const user = new User(req.body);
+
+  const { firstName, lastName, emailId, password } = req.body;
   try {
+    // Validation of data
+    validateSignUpData(req);
+
+    // Encrypt the password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Creating the new instance of the User model
+    const user = new User({
+      firstName, 
+      lastName, 
+      emailId, 
+      password: passwordHash
+    })
+
     await user.save();
     res.send('User added successfully')
   } catch (err) {
-    res.status(400).send('Error saving the user ' + err.message)
+    res.status(400).send('ERROR : ' + err.message)
+  }
+})
+
+app.post('/login', async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
+    if (!validator.isEmail(emailId)) {
+      /* Never mention the message as below as it could be information leaking
+      throw new Error('Email is not valid'); */
+      throw new Error('Invalid credentials');
+    } 
+
+    const user = await User.findOne({ emailId: emailId });
+    if (!user) {
+      // throw new Error('EmailId is not present in Database');
+      throw new Error('Invalid credentials');
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (isPasswordValid) {
+      res.send("Login Successful...!!!");
+    } else {
+      // throw new Error('Password is not correct');
+      throw new Error('Invalid credentials');
+    }
+  } catch (err) {
+    res.status(400).send('ERROR : ' + err.message)
   }
 })
 

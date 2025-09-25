@@ -27,9 +27,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate(value) {
-      if (!validator.isStrongPassword(value)){
-        throw new Error('Enter a strong passoword' + value);
-      }
+      // if (!validator.isStrongPassword(value)){
+      //   throw new Error('Enter a strong passoword' + value);
+      // }
     }
   },
   age: {
