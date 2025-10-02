@@ -121,15 +121,27 @@ app.post('/login', async (req, res) => {
       // throw new Error('EmailId is not present in Database');
       throw new Error('Invalid credentials');
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    /*
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+    */
+
+    // Using the instance method created in the user model
+    const isPasswordValid = await user.validatePassword(password);
+
     if (isPasswordValid) {
 
       // Create the JWT token
-      const token = jwt.sign(
-        { _id: user._id }, // This is the unique identifier for the user
-        'your_jwt_secret_key', // This should be in env variable and should be complex (Secret key)
-        { expiresIn: '1h' }
-      );
+      /*
+        const token = jwt.sign(
+          { _id: user._id }, // This is the unique identifier for the user
+          'your_jwt_secret_key', // This should be in env variable and should be complex (Secret key)
+          { expiresIn: '1h' }
+        );
+      */
+
+      // Get the token from the user model method
+      const token = await user.getJWT();
 
       // Add the token to cookie and send the response back to the user
       res.cookie('token', token, { expires: new Date(Date.now() + 8 * 3600000) }); // Cookie will expire in 8 hours

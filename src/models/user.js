@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -18,7 +20,7 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     trim: true,
     validate(value) {
-      if (!validator.isEmail(value)){
+      if (!validator.isEmail(value)) {
         throw new Error('Invalid email address' + value);
       }
     }
@@ -49,7 +51,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://geographyandyou.com/images/user-profile.png',
     validate(value) {
-      if (!validator.isURL(value)){
+      if (!validator.isURL(value)) {
         throw new Error('Invalid photo URL:' + value);
       }
     }
@@ -64,6 +66,23 @@ const userSchema = new mongoose.Schema({
 }, {
   timestamps: true
 })
+
+userSchema.methods.getJWT = async function () {
+  const user = this;
+
+  const token = await jwt.sign({ _id: user._id },
+    'your_jwt_secret_key', { expiresIn: '7d' }
+  );
+  return token;
+}
+
+userSchema.methods.validatePassword = async function (inputPassword) {
+  const user = this;
+  const hashPassword = user.password;
+
+  const isPasswordValid = await bcrypt.compare(inputPassword, hashPassword);
+  return isPasswordValid;
+}
 
 const User = mongoose.model('User', userSchema);
 
