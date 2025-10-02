@@ -1,0 +1,30 @@
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+
+const userAuth = async (req, res, next) => {
+  try {
+    // Read the token from cookie
+    const { token } = req.cookies;
+
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    // Validate the token
+    const decodedToken = await jwt.verify(token, 'your_jwt_secret_key', { expiresIn: '1h' });
+    const { _id } = decodedToken;
+
+    // Find the user with the token
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    req.user = user;
+    next();
+  } catch (err) {
+    console.log('Auth Middleware Error:', err);
+    res.status(400).send('ERROR : ' + err.message);
+  }
+}
+
+module.exports = { userAuth };
