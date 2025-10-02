@@ -4,7 +4,9 @@ const validator = require('validator');
 const User = require('./models/user');
 const { validateSignUpData } = require('./utils/validation');
 const bcrypt = require('bcrypt');
-
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const { userAuth } = require('./middleware/auth');
 const app = express();
 
 /* <------------------- Here request data is being harcoded -------------------> */
@@ -30,6 +32,9 @@ const app = express();
 // This middleware will be activated for the routes since app.use will run on all the route handlers
 // The request.body will be in the form of readable stream and we need to convert it to json()
 app.use(express.json());
+
+// Middleware for parsing cookies
+app.use(cookieParser());
 
 app.post('/signUp', async (req, res) => {
   // console.log('Body', req.body)
@@ -60,6 +65,47 @@ app.post('/signUp', async (req, res) => {
   }
 })
 
+// Without middleware
+app.get('/profileWithoutMiddleware', async (req, res) => {
+  try {
+    const cookies = req.cookies;
+
+    const { token } = cookies;
+    if (!token) {
+      throw new Error('Unauthorized: Invalid token');
+    }
+
+    // Validate the token
+    const decodedMessage = jwt.verify(token, 'your_jwt_secret_key', { expiresIn: '1d' });
+    console.log('Decoded Token', decodedMessage);
+    const { _id } = decodedMessage;
+    console.log('Logged in user id', _id);
+
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    res.send(user);
+  } catch (err) {
+    res.status(400).send('ERROR : ' + err.message);
+  }
+})
+
+// With middleware
+app.get('/profile', userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    res.send(user);
+  } catch (err) {
+    res.status(400).send('ERROR : ' + err.message);
+  }
+})
+
+app.post('/sendConnectionRequest', userAuth, async (req, res) => {
+  const user = req.user;
+  res.send(user.firstName + ' Sent the Connection request successfully');
+})
+
 app.post('/login', async (req, res) => {
   try {
     const { emailId, password } = req.body;
@@ -70,12 +116,23 @@ app.post('/login', async (req, res) => {
     } 
 
     const user = await User.findOne({ emailId: emailId });
+    console.log('user', user);
     if (!user) {
       // throw new Error('EmailId is not present in Database');
       throw new Error('Invalid credentials');
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
+
+      // Create the JWT token
+      const token = jwt.sign(
+        { _id: user._id }, // This is the unique identifier for the user
+        'your_jwt_secret_key', // This should be in env variable and should be complex (Secret key)
+        { expiresIn: '1h' }
+      );
+
+      // Add the token to cookie and send the response back to the user
+      res.cookie('token', token, { expires: new Date(Date.now() + 8 * 3600000) }); // Cookie will expire in 8 hours
       res.send("Login Successful...!!!");
     } else {
       // throw new Error('Password is not correct');
