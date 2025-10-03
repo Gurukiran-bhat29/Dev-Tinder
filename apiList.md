@@ -8,13 +8,13 @@
 ## Profile router
 - GET /profile/view
 - PATCH /profile/edit
-- PATCH /profile/password
+- PATCH /profile/password // Forgot password API
 
 ## Connection request router
 - POST /request/send/intrested/:userId
 - POST /request/send/ignored/:userId
 - POST /request/review/accepted/:requestId
-- POST /request/review/rejected/:requestId
+- POST /request/review/rejected/:requestId 
 
 ## User router
 - GET /user/connections
