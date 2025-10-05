@@ -35,3 +35,7 @@
 
 - Add the validation to 'skills'
 - NEVER TRUST 'req.body'
+
+- Read about $or and $and query in mongoose
+- Why do we need index in DB
+- What is the advantages and disadvantages of creating index?

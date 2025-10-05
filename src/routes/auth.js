@@ -7,7 +7,7 @@ const User = require('../models/user');
 const authRouter = express.Router();
 
 authRouter.post('/signUp', async (req, res) => {
-  const { firstName, lastName, emailId, password } = req.body;
+  const { firstName, lastName, emailId, password, gender } = req.body;
   try {
     validateSignUpData(req);
 
@@ -17,7 +17,8 @@ authRouter.post('/signUp', async (req, res) => {
       firstName,
       lastName,
       emailId,
-      password: passwordHash
+      gender,
+      password: passwordHash,
     })
 
     await user.save();

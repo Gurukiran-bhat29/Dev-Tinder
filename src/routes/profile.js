@@ -47,7 +47,7 @@ profileRouter.patch('/profile/edit', userAuth, async (req, res) => {
   }
 });
 
-profileRouter.post(('/profile/forgotPassword'), userAuth, async (req, res) => {
+profileRouter.post('/profile/forgotPassword', userAuth, async (req, res) => {
   try {
     const hashPassword = req.user.password;
 

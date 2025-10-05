@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minLength: 3,
-    maxLength: 50
+    maxLength: 50,
+    index: true // Query will much faster if the DB is too big
   },
   lastName: {
     type: String
@@ -16,7 +17,7 @@ const userSchema = new mongoose.Schema({
   emailId: {
     type: String,
     required: true,
-    unique: true,
+    unique: true, // mongodb will internally add the index: true, so we can avoid adding index if the type is unique
     lowercase: true,
     trim: true,
     validate(value) {
@@ -41,11 +42,16 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    validate(value) {
-      if (!['male', 'female', 'others'].includes(value)) {
-        throw new Error('Gender is not valid..!')
-      }
-    }
+    required: true,
+    enum: {
+      values: ['male', 'female', 'others'],
+      message: `{VALUE} is not a valid gender type`
+    },
+    // validate(value) {
+    //   if (!['male', 'female', 'others'].includes(value)) {
+    //     throw new Error('Gender is not valid..!')
+    //   }
+    // }
   },
   photoUrl: {
     type: String,
