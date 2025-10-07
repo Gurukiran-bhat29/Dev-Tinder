@@ -1,16 +1,17 @@
 const mongoose = require("mongoose");
-const { default: next } = require("next");
 
 const connectionRequestSchema = new mongoose.Schema(
   {
     fromUserId: {
       type: mongoose.Schema.Types.ObjectId, // This refers to the _id field in the User model
       required: true,
+      ref: 'User', // reference to the user collection
       index: true
     },
     toUserId: {
       type: mongoose.Schema.Types.ObjectId, // This refers to the _id field in the User model
       required: true,
+      ref: 'User', // reference to the user collection
       index: true
     },
     status: {
