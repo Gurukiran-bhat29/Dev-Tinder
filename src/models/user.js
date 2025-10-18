@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     minLength: 3,
     maxLength: 50,
-    index: true // Query will much faster if the DB is too big
+    index: true // Query will much faster if the DB gets big
   },
   lastName: {
     type: String
