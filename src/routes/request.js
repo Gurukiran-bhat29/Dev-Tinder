@@ -3,6 +3,8 @@ const { userAuth } = require("../middleware/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 
+const sendEmail = require("../utils/sendEmail");
+
 const requestRouter = express.Router();
 
 requestRouter.post(
