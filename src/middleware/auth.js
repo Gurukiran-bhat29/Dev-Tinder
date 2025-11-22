@@ -11,7 +11,7 @@ const userAuth = async (req, res, next) => {
     }
 
     // Validate the token
-    const decodedToken = await jwt.verify(token, 'your_jwt_secret_key', { expiresIn: '1h' });
+    const decodedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
     const { _id } = decodedToken;
 
     // Find the user with the token

@@ -37,6 +37,8 @@ requestRouter.post(
         status,
       });
 
+      const emailRes = await sendEmail.run();
+
       // Check if there is an existing connection request
       const existingConnectionRequest = await ConnectionRequest.findOne({
         $or: [
