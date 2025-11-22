@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const connectDb = require('./config/database');
 const cookieParser = require('cookie-parser');
@@ -21,6 +20,9 @@ app.use('/', authRouter);
 app.use('/', profileRouter);
 app.use('/', requestRouter);
 app.use('/', userRouter);
+
+require('dotenv').config();
+require('./utils/cronjobs');
 
 connectDb().then(() => {
   try {
