@@ -74,6 +74,10 @@ const userSchema = new mongoose.Schema({
   },
   skills: {
     type: [String]
+  },
+  lastSeen: {
+    type: Date,
+    default: Date.now
   }
 }, {
   timestamps: true

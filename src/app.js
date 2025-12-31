@@ -32,7 +32,10 @@ app.use('/', paymentRouter); // Add this line
 app.use('/', chatRouter);
 
 const server = http.createServer(app);
-initializeSocket(server);
+const { onlineUsers } = initializeSocket(server);
+
+// Make onlineUsers accessible in routes
+app.locals.onlineUsers = onlineUsers;
 
 connectDb().then(() => {
   try {

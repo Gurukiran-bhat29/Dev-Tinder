@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const Chat = require("../models/chat");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
+const lastSeenText = require("../utils/lastSeenText");
+const onlineUsers = new Map(); // Map<userId, socketId>
 
 const getSecretRoomId = (userId, targetUserId) => {
   return crypto
@@ -64,6 +66,12 @@ const initializeSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("User connected:", socket.userId);
 
+    // Add user to online users
+    onlineUsers.set(socket.userId, socket.id);
+
+    // Broadcase user online status
+    io.emit("userOnline", { userId: socket.userId });;
+    
     socket.on("joinChat", ({ firstName, userId, targetUserId }) => {
       // Verify the userId matches the authenticated user
       if (socket.userId !== userId) {
@@ -128,10 +136,30 @@ const initializeSocket = (server) => {
       }
     );
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log("User disconnected:", socket.userId);
+
+      // Update last seen timestamp
+      try {
+        await User.findByIdAndUpdate(socket.userId, { 
+          lastSeen: new Date() 
+        });  
+      } catch (err) {
+        console.error("Error updating last seen:", err);
+      }
+
+      // Remove user from online users
+      onlineUsers.delete(socket.userId);
+
+      // Broadcast user offline status
+      io.emit("userOffline", { 
+        userId: socket.userId,
+        lastSeen: lastSeenText(new Date())
+      });
     });
   });
+
+  return { onlineUsers };
 };
 
 module.exports = initializeSocket;
