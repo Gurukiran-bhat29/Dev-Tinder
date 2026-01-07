@@ -14,7 +14,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     const connectionRequests = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
       status: 'interested'
-    }).populate('fromUserId', ["firstName", "lastName"]) // Here populate will send the whole user object if 2nd arguement is not mentioned
+    }).populate('fromUserId', ["firstName", "lastName", "photoUrl", "about"]) // Here populate will send the whole user object if 2nd arguement is not mentioned
 
     res.json({
       message: 'Data fetched successfully',
